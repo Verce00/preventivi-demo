@@ -27,7 +27,8 @@ async function crea(p,c){
   doc.setProperties({title:"Preventivo "+nomeAz(p),author:"Ask Consulting S.r.l.",creator:"Preventivi Ask"});
   const font=(stile,size,col)=>{doc.setFont("helvetica",stile||"normal");doc.setFontSize(size||9);doc.setTextColor(...(col||INK))};
   const T=(t,x,y,o)=>{if(t==null||t==="")return;doc.text(String(t),x,y,Object.assign({baseline:"alphabetic"},o||{}))};
-  const spaziato=(t,x,y,sp,o)=>{doc.setCharSpace(sp||0.6);T(t,x,y,o);doc.setCharSpace(0)};
+  const spaziato=(t,x,y,sp,o)=>{sp=sp||0.6;o=o||{};if(o.align==="right"){x-=doc.getTextWidth(String(t))+sp*(String(t).length-1);o=Object.assign({},o,{align:"left"})}
+    doc.setCharSpace(sp);T(t,x,y,o);doc.setCharSpace(0)};
   const linea=(x1,y1,x2,y2,col,w)=>{doc.setDrawColor(...(col||LINEA));doc.setLineWidth(w||0.6);doc.line(x1,y1,x2,y2)};
   const righe=(t,w)=>t?doc.splitTextToSize(String(t),w):[];
   let y=0;
@@ -39,7 +40,7 @@ async function crea(p,c){
   font("bold",17,BLU_SCURO);T("Piano formativo finanziato",PW-M,66,{align:"right"});
   font("normal",9,GRIGIO);T("Fondimpresa · Conto Formazione aziendale",PW-M,80,{align:"right"});
   y=34+lh+16;
-  doc.setFillColor(...ARANCIO);doc.rect(M,y,36,2.2,"F");linea(M+40,y+1.1,PW-M,y+1.1);
+  linea(M,y+1.1,PW-M,y+1.1);
   y+=26;
 
   /* ---- azienda e dati del preventivo ---- */
@@ -50,7 +51,7 @@ async function crea(p,c){
   let yAz=y+18+(Math.min(nl.length,3)-1)*17;
   const cf=(p.aziende||[]).map(a=>a.cf).filter(Boolean);
   if(cf.length){font("normal",8.5,GRIGIO);yAz+=14;T("C.F. "+cf.join(" · "),M,yAz)}
-  const meta=[["Data",dIt(p.dataPreventivo)],["Riferimento",p.id||""],["Periodo del piano",p.periodo||""]].filter(x=>x[1]);
+  const meta=[["Data",dIt(p.dataPreventivo)],["Periodo del piano",p.periodo||""]].filter(x=>x[1]);
   let ym=y;meta.forEach(([k,v])=>{font("bold",7,GRIGIO);spaziato(k.toUpperCase(),colDx,ym,1);font("normal",9.5,INK);
     const vl=righe(v,150);vl.slice(0,2).forEach((l,i)=>T(l,colDx,ym+13+i*11));ym+=13+(Math.min(vl.length,2)-1)*11+14});
   y=Math.max(yAz,ym-14)+24;
@@ -58,7 +59,7 @@ async function crea(p,c){
   /* ---- riquadro con i numeri principali ---- */
   const kh=60;doc.setFillColor(...FONDO);doc.roundedRect(M,y,W,kh,6,6,"F");
   doc.setFillColor(...BLU);doc.roundedRect(M,y,4,kh,2,2,"F");
-  const kpi=[["Importo per il nuovo piano",eu(c.totale),BLU],["Docenza finanziata",eu(c.docenza),INK],["Ore di formazione",numIt(c.ore),INK]];
+  const kpi=[["Totale piano formativo",eu(c.totale),BLU],["Docenza finanziata",eu(c.docenza),INK],["Ore di formazione",numIt(c.ore),INK]];
   const kw=W/3;
   kpi.forEach(([lab,val,col],i)=>{const x=M+18+i*kw;if(i)linea(M+i*kw,y+12,M+i*kw,y+kh-12);
     font("bold",7,GRIGIO);spaziato(lab.toUpperCase(),x,y+22,0.8);font("bold",i?14:17,col);T(val,x,y+44)});
