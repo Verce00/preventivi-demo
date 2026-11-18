@@ -57,9 +57,11 @@ async function crea(p,c){
   y=Math.max(yAz,ym-14)+24;
 
   /* ---- riquadro con i numeri principali ---- */
+  // il recupero spese va nella tabella di progettazione: la docenza lo esclude
+  const recup=Number(c.recupero)>0?Number(c.recupero):0, docCorsi=Math.round((Number(c.docenza)-recup)*100)/100;
   const kh=60;doc.setFillColor(...FONDO);doc.roundedRect(M,y,W,kh,6,6,"F");
   doc.setFillColor(...BLU);doc.roundedRect(M,y,4,kh,2,2,"F");
-  const kpi=[["Totale piano formativo",eu(c.totale),BLU],["Docenza finanziata",eu(c.docenza),INK],["Ore di formazione",numIt(c.ore),INK]];
+  const kpi=[["Totale piano formativo",eu(c.totale),BLU],["Docenza finanziata",eu(docCorsi),INK],["Ore di formazione",numIt(c.ore),INK]];
   const kw=W/3;
   kpi.forEach(([lab,val,col],i)=>{const x=M+18+i*kw;if(i)linea(M+i*kw,y+12,M+i*kw,y+kh-12);
     font("bold",7,GRIGIO);spaziato(lab.toUpperCase(),x,y+22,0.8);font("bold",i?14:17,col);T(val,x,y+44)});
@@ -90,12 +92,11 @@ async function crea(p,c){
   intest(C);
   corsi.forEach(co=>{const i=(p.corsi||[]).indexOf(co);
     riga(C,{doc:co.docente||"",att:co.titolo||"",per:String(co.periodo||p.periodo||"").trim(),lav:String(co.partecipanti||"").trim(),ore:String(co.ore||"").trim(),imp:eu(c.importi[i])})});
-  if(Number(c.recupero)>0)riga(C,{doc:"Recupero spese",att:"Spese forfettarie azienda cliente",per:"",lav:"",ore:"",imp:eu(c.recupero)},{colonne:{doc:GRIGIO,att:GRIGIO}});
   // totale docenza
   if(y+26>FONDO_PAG)nuovaPagina();
   doc.setFillColor(...FONDO);doc.rect(M,y,W,26,"F");
   font("bold",8.8,INK);T("Totale docenza finanziata",C[3].x-6,y+16.5,{align:"right"});
-  T(numIt(c.ore)+" ore",xA(C[4],"c"),y+16.5,{align:"center"});T(eu(c.docenza),xA(C[5],"r"),y+16.5,{align:"right"});
+  T(numIt(c.ore)+" ore",xA(C[4],"c"),y+16.5,{align:"center"});T(eu(docCorsi),xA(C[5],"r"),y+16.5,{align:"right"});
   y+=26+30;
 
   const P2=[{k:"sog",t:"Soggetto",w:150},{k:"att",t:"Attività",w:W-150-90},{k:"imp",t:"Importo",w:90,a:"r"}];
@@ -104,6 +105,7 @@ async function crea(p,c){
   intest(P2);
   [["Ask Consulting S.r.l.","Attività preparatorie e di accompagnamento",c.askPrep],
    ["Ask Consulting S.r.l.","Attività di gestione e rendicontazione",c.askGest],
+   ...(recup>0?[["Recupero spese","Spese forfettarie azienda cliente",recup]]:[]),
    ["Revisore dei conti","Attività di certificazione delle spese sostenute",c.revisore]].forEach(r=>riga(P2,{sog:r[0],att:r[1],imp:eu(r[2])}));
   y+=22;
 
