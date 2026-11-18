@@ -90,7 +90,7 @@ async function crea(p,c){
   intest(C);
   corsi.forEach(co=>{const i=(p.corsi||[]).indexOf(co);
     riga(C,{doc:co.docente||"",att:co.titolo||"",per:String(co.periodo||p.periodo||"").trim(),lav:String(co.partecipanti||"").trim(),ore:String(co.ore||"").trim(),imp:eu(c.importi[i])})});
-  riga(C,{doc:"Recupero spese",att:"Spese forfettarie azienda cliente",per:"",lav:"",ore:"",imp:c.recupero?eu(c.recupero):"—"},{colonne:{doc:GRIGIO,att:GRIGIO}});
+  if(Number(c.recupero)>0)riga(C,{doc:"Recupero spese",att:"Spese forfettarie azienda cliente",per:"",lav:"",ore:"",imp:eu(c.recupero)},{colonne:{doc:GRIGIO,att:GRIGIO}});
   // totale docenza
   if(y+26>FONDO_PAG)nuovaPagina();
   doc.setFillColor(...FONDO);doc.rect(M,y,W,26,"F");
