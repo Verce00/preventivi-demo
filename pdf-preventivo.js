@@ -69,7 +69,7 @@ async function crea(p,c){
   const nuovaPagina=()=>{doc.addPage();y=50};
   const titolo=(t,sub)=>{if(y+70>FONDO_PAG)nuovaPagina();font("bold",11.5,BLU_SCURO);T(t,M,y);if(sub){const w=doc.getTextWidth(t);font("normal",8.5,GRIGIO);T(sub,M+w+8,y)}y+=12};
   // colonne della docenza
-  const C=[{k:"doc",t:"Docente / fornitore",w:104},{k:"att",t:"Attività svolta",w:170},{k:"per",t:"Periodo",w:76},{k:"lav",t:"N. min. lav.",w:58,a:"c"},{k:"ore",t:"Ore",w:36,a:"c"},{k:"imp",t:"Importo",w:67,a:"r"}];
+  const C=[{k:"doc",t:"Docente / fornitore",w:104},{k:"att",t:"Tematica formativa",w:170},{k:"per",t:"Periodo",w:76},{k:"lav",t:"N. min. lav.",w:58,a:"c"},{k:"ore",t:"Ore",w:36,a:"c"},{k:"imp",t:"Importo",w:67,a:"r"}];
   let cx=M;C.forEach(k=>{k.x=cx;cx+=k.w});
   const xA=(k,a)=>a==="r"?k.x+k.w-6:a==="c"?k.x+k.w/2:k.x+6;
   const intest=cols=>{font("bold",6.8,GRIGIO);cols.forEach(k=>{doc.setCharSpace(0.5);T(k.t.toUpperCase(),xA(k,k.a),y+10,{align:k.a==="r"?"right":k.a==="c"?"center":"left"});doc.setCharSpace(0)});
@@ -115,19 +115,6 @@ async function crea(p,c){
   font("normal",8.5,[196,210,232]);T("Rimborso delle spese sostenute",M+22,y+38);
   font("bold",20,[255,255,255]);T(eu(c.totalePiano),PW-M-20,y+34,{align:"right"});
   y+=54+26;
-
-  /* ---- cronoprogramma (le date mancanti si completano a mano) ---- */
-  const d=p.date||{};
-  const cr=[["Presentazione del piano a Fondimpresa","entro il",d.presentazione],["Avvio dei corsi di formazione","a partire dal",d.avvio],
-    ["Conclusione dei corsi","entro il",d.fine],["Rendicontazione e certificazione delle spese","entro il",d.rendicontazione],
-    ["Presentazione del prossimo piano finanziato da Fondimpresa","dal",d.prossimo]];
-  if(y+16+cr.length*20>FONDO_PAG)nuovaPagina();
-  titolo("Cronoprogramma");y+=4;
-  cr.forEach(([lab,q,val])=>{
-    font("normal",8.8,INK);T(lab,M,y+13);font("normal",8.5,GRIGIO);T(q,PW-M-128,y+13,{align:"right"});
-    if(val){font("bold",9,INK);T(dIt(val),PW-M-60,y+13,{align:"center"})}
-    else{doc.setLineDashPattern([1.5,2],0);linea(PW-M-118,y+15,PW-M,y+15,[170,176,186],0.6);doc.setLineDashPattern([],0)}
-    y+=20;linea(M,y,PW-M,y)});
 
   /* ---- piè di pagina su ogni pagina ---- */
   const n=doc.getNumberOfPages();
