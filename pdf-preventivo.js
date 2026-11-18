@@ -44,14 +44,14 @@ async function crea(p,c){
   y+=26;
 
   /* ---- azienda e dati del preventivo ---- */
-  const colDx=PW-M-150;
+  const colDx=PW-M-180;
   font("bold",7,GRIGIO);spaziato("AZIENDA",M,y,1);
   font("bold",15,INK);const nl=righe(nomeAz(p),colDx-M-20);
   nl.slice(0,3).forEach((l,k)=>T(l,M,y+18+k*17));
   let yAz=y+18+(Math.min(nl.length,3)-1)*17;
   const cf=(p.aziende||[]).map(a=>a.cf).filter(Boolean);
   if(cf.length){font("normal",8.5,GRIGIO);yAz+=14;T("C.F. "+cf.join(" · "),M,yAz)}
-  const meta=[["Data",dIt(p.dataPreventivo)],["Periodo del piano",p.periodo||""]].filter(x=>x[1]);
+  const meta=[["Data",dIt(p.dataPreventivo)],["Periodo di effettuazione del piano",p.periodo||""]].filter(x=>x[1]);
   let ym=y;meta.forEach(([k,v])=>{font("bold",7,GRIGIO);spaziato(k.toUpperCase(),colDx,ym,1);font("normal",9.5,INK);
     const vl=righe(v,150);vl.slice(0,2).forEach((l,i)=>T(l,colDx,ym+13+i*11));ym+=13+(Math.min(vl.length,2)-1)*11+14});
   y=Math.max(yAz,ym-14)+24;
